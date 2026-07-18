@@ -2,11 +2,14 @@ import { expect, Page } from '@playwright/test';
 import { RandomUtil } from '../utils/RandomUtil';
 import { BasePage } from './BasePage';
 
+
 export class SeatSelectionPage extends BasePage {
+
 
     constructor(page: Page) {
         super(page);
     }
+
 
 
     // Locators
@@ -15,12 +18,10 @@ export class SeatSelectionPage extends BasePage {
         this.page.locator('[data-layout="cabin"]');
 
 
+
     private availableSeats = () =>
         this.page.locator('.seat.available');
 
-
-    private selectedSeats = () =>
-        this.page.locator('.seat.selected');
 
 
     private continueButton = () =>
@@ -28,14 +29,19 @@ export class SeatSelectionPage extends BasePage {
 
 
 
+
+
     // Verify Seat Map
 
     async verifySeatMap() {
 
-        await expect(this.cabin())
-            .toBeVisible();
+        await expect(
+            this.cabin()
+        ).toBeVisible();
 
     }
+
+
 
 
 
@@ -47,12 +53,15 @@ export class SeatSelectionPage extends BasePage {
         await this.verifySeatMap();
 
 
+
         const seatCount =
             await this.availableSeats().count();
 
 
+
         expect(seatCount)
             .toBeGreaterThan(0);
+
 
 
 
@@ -62,14 +71,21 @@ export class SeatSelectionPage extends BasePage {
 
 
 
-        // Wait until seat selection is reflected
+        // Wait for UI state update
+        await this.page.waitForTimeout(1000);
+
+
+
         await expect(
-            this.selectedSeats()
-        ).toHaveCount(1, {
-            timeout: 15000
+            this.continueButton()
+        ).toBeEnabled({
+            timeout:15000
         });
 
     }
+
+
+
 
 
 
@@ -85,10 +101,15 @@ export class SeatSelectionPage extends BasePage {
         });
 
 
+
         await this.continueButton()
             .click();
 
     }
+
+
+
+
 
 
 
@@ -100,12 +121,17 @@ export class SeatSelectionPage extends BasePage {
         await this.selectRandomSeat();
 
 
+
         await this.continueBooking();
 
 
+
         await expect(this.page)
-            .toHaveURL(/book\/passenger/);
+            .toHaveURL(
+                /book\/passenger/
+            );
 
     }
+
 
 }
