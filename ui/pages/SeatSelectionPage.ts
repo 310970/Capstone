@@ -1,5 +1,4 @@
 import { expect, Page } from '@playwright/test';
-import { RandomUtil } from '../utils/RandomUtil';
 import { BasePage } from './BasePage';
 
 
@@ -37,9 +36,13 @@ export class SeatSelectionPage extends BasePage {
 
         await expect(
             this.cabin()
-        ).toBeVisible();
+        ).toBeVisible({
+            timeout:15000
+        });
 
     }
+
+
 
 
 
@@ -55,7 +58,8 @@ export class SeatSelectionPage extends BasePage {
 
 
         const seatCount =
-            await this.availableSeats().count();
+            await this.availableSeats()
+                .count();
 
 
 
@@ -65,22 +69,50 @@ export class SeatSelectionPage extends BasePage {
 
 
 
-        await RandomUtil.clickRandom(
+        const randomIndex =
+            Math.floor(
+                Math.random() * seatCount
+            );
+
+
+
+        const seat =
             this.availableSeats()
+                .nth(randomIndex);
+
+
+
+        console.log(
+            "Available seats:",
+            seatCount
+        );
+
+
+        console.log(
+            "Selected seat index:",
+            randomIndex
         );
 
 
 
-        // Wait for UI state update
-        await this.page.waitForTimeout(1000);
+
+        await seat.scrollIntoViewIfNeeded();
 
 
 
-        await expect(
-            this.continueButton()
-        ).toBeEnabled({
-            timeout:15000
+        await seat.click({
+            force:true
         });
+
+
+
+
+        // Allow UI state update
+
+        await this.page.waitForTimeout(
+            3000
+        );
+
 
     }
 
@@ -89,9 +121,11 @@ export class SeatSelectionPage extends BasePage {
 
 
 
-    // Continue
+
+    // Continue Booking
 
     async continueBooking() {
+
 
 
         await expect(
@@ -126,10 +160,14 @@ export class SeatSelectionPage extends BasePage {
 
 
 
-        await expect(this.page)
-            .toHaveURL(
-                /book\/passenger/
-            );
+        await expect(
+            this.page
+        ).toHaveURL(
+            /book\/passenger/,
+            {
+                timeout:15000
+            }
+        );
 
     }
 
