@@ -8,56 +8,103 @@ export class SeatSelectionPage extends BasePage {
         super(page);
     }
 
+
     // Locators
 
     private cabin = () =>
         this.page.locator('[data-layout="cabin"]');
 
+
     private availableSeats = () =>
         this.page.locator('.seat.available');
 
+
+    private selectedSeats = () =>
+        this.page.locator('.seat.selected');
+
+
     private continueButton = () =>
         this.page.locator('#continue-btn');
+
+
 
     // Verify Seat Map
 
     async verifySeatMap() {
 
-        await expect(this.cabin()).toBeVisible();
+        await expect(this.cabin())
+            .toBeVisible();
 
     }
+
+
 
     // Select Random Seat
 
     async selectRandomSeat() {
 
+
         await this.verifySeatMap();
 
-        const seatCount = await this.availableSeats().count();
 
-        expect(seatCount).toBeGreaterThan(0);
+        const seatCount =
+            await this.availableSeats().count();
 
-        await RandomUtil.clickRandom(this.availableSeats());
+
+        expect(seatCount)
+            .toBeGreaterThan(0);
+
+
+
+        await RandomUtil.clickRandom(
+            this.availableSeats()
+        );
+
+
+
+        // Wait until seat selection is reflected
+        await expect(
+            this.selectedSeats()
+        ).toHaveCount(1, {
+            timeout: 15000
+        });
 
     }
+
+
 
     // Continue
 
     async continueBooking() {
 
-        await this.continueButton().click();
+
+        await expect(
+            this.continueButton()
+        ).toBeEnabled({
+            timeout:15000
+        });
+
+
+        await this.continueButton()
+            .click();
 
     }
+
+
 
     // Complete Seat Selection
 
     async selectSeatAndContinue() {
 
+
         await this.selectRandomSeat();
+
 
         await this.continueBooking();
 
-        await expect(this.page).toHaveURL(/book\/passenger/);
+
+        await expect(this.page)
+            .toHaveURL(/book\/passenger/);
 
     }
 
