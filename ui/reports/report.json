@@ -107,22 +107,25 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5937,
+                      "duration": 6577,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "Available : 116\n"
+                          "text": "Available seats: \u001b[33m113\u001b[39m\n"
                         },
                         {
-                          "text": "Selected Index : 27\n"
+                          "text": "Selected seat index: \u001b[33m46\u001b[39m\n"
                         },
                         {
-                          "text": "PNR : TS-1015-0048\n"
+                          "text": "Seat selected successfully\n"
+                        },
+                        {
+                          "text": "PNR : TS-1015-0059\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-18T05:54:05.106Z",
+                      "startTime": "2026-07-18T06:58:17.407Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -158,8 +161,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-18T05:54:04.410Z",
-    "duration": 8933.742,
+    "startTime": "2026-07-18T06:58:16.607Z",
+    "duration": 10543.952000000001,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

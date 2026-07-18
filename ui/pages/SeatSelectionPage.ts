@@ -1,14 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 
-
 export class SeatSelectionPage extends BasePage {
-
 
     constructor(page: Page) {
         super(page);
     }
-
 
 
     // Locators
@@ -17,10 +14,12 @@ export class SeatSelectionPage extends BasePage {
         this.page.locator('[data-layout="cabin"]');
 
 
-
     private availableSeats = () =>
         this.page.locator('.seat.available');
 
+
+    private selectedSeats = () =>
+        this.page.locator('.seat.selected');
 
 
     private continueButton = () =>
@@ -28,27 +27,20 @@ export class SeatSelectionPage extends BasePage {
 
 
 
-
-
     // Verify Seat Map
 
     async verifySeatMap() {
 
-        await expect(
-            this.cabin()
-        ).toBeVisible({
-            timeout:15000
-        });
+        await expect(this.cabin())
+            .toBeVisible({
+                timeout:15000
+            });
 
     }
 
 
 
-
-
-
-
-    // Select Random Seat
+    // Select Seat
 
     async selectRandomSeat() {
 
@@ -56,16 +48,18 @@ export class SeatSelectionPage extends BasePage {
         await this.verifySeatMap();
 
 
-
         const seatCount =
-            await this.availableSeats()
-                .count();
+            await this.availableSeats().count();
 
+
+        console.log(
+            "Available seats:",
+            seatCount
+        );
 
 
         expect(seatCount)
             .toBeGreaterThan(0);
-
 
 
 
@@ -75,19 +69,6 @@ export class SeatSelectionPage extends BasePage {
             );
 
 
-
-        const seat =
-            this.availableSeats()
-                .nth(randomIndex);
-
-
-
-        console.log(
-            "Available seats:",
-            seatCount
-        );
-
-
         console.log(
             "Selected seat index:",
             randomIndex
@@ -95,30 +76,43 @@ export class SeatSelectionPage extends BasePage {
 
 
 
+        const seat =
+            this.availableSeats()
+                .nth(randomIndex);
+
+
 
         await seat.scrollIntoViewIfNeeded();
 
 
 
-        await seat.click({
-            force:true
-        });
+        await seat.click();
 
 
 
+        // Wait for UI state update
+        await this.page.waitForTimeout(2000);
 
-        // Allow UI state update
 
-        await this.page.waitForTimeout(
-            3000
+
+        // Verify seat selected
+        await expect(
+            seat
+        ).toHaveClass(
+            /selected/,
+            {
+                timeout:15000
+            }
+        );
+
+
+
+        console.log(
+            "Seat selected successfully"
         );
 
 
     }
-
-
-
-
 
 
 
@@ -127,27 +121,36 @@ export class SeatSelectionPage extends BasePage {
     async continueBooking() {
 
 
+        const button =
+            this.continueButton();
 
-        await expect(
-            this.continueButton()
-        ).toBeEnabled({
-            timeout:15000
+
+
+        await expect(button)
+            .toBeVisible({
+                timeout:15000
+            });
+
+
+
+        // wait until application enables button
+        await expect
+        (
+            button
+        )
+        .toBeEnabled({
+            timeout:30000
         });
 
 
 
-        await this.continueButton()
-            .click();
+        await button.click();
 
     }
 
 
 
-
-
-
-
-    // Complete Seat Selection
+    // Complete Flow
 
     async selectSeatAndContinue() {
 
@@ -155,21 +158,18 @@ export class SeatSelectionPage extends BasePage {
         await this.selectRandomSeat();
 
 
-
         await this.continueBooking();
 
 
 
-        await expect(
-            this.page
-        ).toHaveURL(
-            /book\/passenger/,
-            {
-                timeout:15000
-            }
-        );
+        await expect(this.page)
+            .toHaveURL(
+                /book\/passenger/,
+                {
+                    timeout:30000
+                }
+            );
 
     }
-
 
 }
